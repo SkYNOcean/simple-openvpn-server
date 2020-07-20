@@ -133,7 +133,7 @@ key server.key
 dh dh.pem
 tls-auth ta.key 0
 topology subnet
-server 10.8.0.0 255.255.255.0
+server 172.16.254.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" > /etc/openvpn/server.conf
 echo 'push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server.conf
 
@@ -165,12 +165,12 @@ if pgrep firewalld; then
 	# We don't use --add-service=openvpn because that would only work with
 	# the default port and protocol.
 	firewall-cmd --zone=public --add-port=$PORT/$PROTOCOL
-	firewall-cmd --zone=trusted --add-source=10.8.0.0/24
+	firewall-cmd --zone=trusted --add-source=172.16.254.0/24
 	firewall-cmd --permanent --zone=public --add-port=$PORT/$PROTOCOL
-	firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/24
+	firewall-cmd --permanent --zone=trusted --add-source=172.16.254.0/24
 	# Set NAT for the VPN subnet
-	firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 -j SNAT --to $IP
-	firewall-cmd --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 -j SNAT --to $IP
+	firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -s 172.16.254.0/24 -j SNAT --to $IP
+	firewall-cmd --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s 172.16.254.0/24 -j SNAT --to $IP
 else
 	# Needed to use rc.local with some systemd distros
 	if [[ "$OS" = 'debian' && ! -e $RCLOCAL ]]; then
@@ -179,17 +179,17 @@ exit 0' > $RCLOCAL
 	fi
 	chmod +x $RCLOCAL
 	# Set NAT for the VPN subnet
-	iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to $IP
-	sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to $IP" $RCLOCAL
+	iptables -t nat -A POSTROUTING -s 172.16.254.0/24 -j SNAT --to $IP
+	sed -i "1 a\iptables -t nat -A POSTROUTING -s 172.16.254.0/24 -j SNAT --to $IP" $RCLOCAL
 	if iptables -L -n | grep -qE '^(REJECT|DROP)'; then
 		# If iptables has at least one REJECT rule, we asume this is needed.
 		# Not the best approach but I can't think of other and this shouldn't
 		# cause problems.
 		iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
-		iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT
+		iptables -I FORWARD -s 172.16.254.0/24 -j ACCEPT
 		iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
 		sed -i "1 a\iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT" $RCLOCAL
-		sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
+		sed -i "1 a\iptables -I FORWARD -s 172.16.254.0/24 -j ACCEPT" $RCLOCAL
 		sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
 	fi
 fi
@@ -262,19 +262,19 @@ chmod g+s /etc/openvpn/easy-rsa/
 #Generate a self-signed certificate for the web server
 mv /etc/lighttpd/ssl/ /etc/lighttpd/ssl.$$/
 mkdir /etc/lighttpd/ssl/
-openssl req -new -x509 -keyout /etc/lighttpd/ssl/server.pem -out /etc/lighttpd/ssl/server.pem -days 9999 -nodes -subj "/C=US/ST=California/L=San Francisco/O=example.com/OU=Ops Department/CN=example.com"
+openssl req -new -x509 -keyout /etc/lighttpd/ssl/server.pem -out /etc/lighttpd/ssl/server.pem -days 380 -nodes -subj "/C=CR/ST=San Jose/L=Perez Zeledon/O=Soporte101.com/OU=IT-Dept/CN=vpn.soporte101.com"
 chmod 744 /etc/lighttpd/ssl/server.pem
 
 
 #Configure the web server with the lighttpd.conf from GitHub
 mv /etc/lighttpd/lighttpd.conf /etc/lighttpd/lighttpd.conf.$$
-wget -O /etc/lighttpd/lighttpd.conf https://raw.githubusercontent.com/theonemule/simple-openvpn-server/master/lighttpd.conf
+wget -O /etc/lighttpd/lighttpd.conf https://raw.githubusercontent.com/gabrielpc1190/simple-openvpn-server/master/lighttpd.conf
 
 #install the webserver scripts
 rm /var/www/html/*
-wget -O /var/www/html/index.sh https://raw.githubusercontent.com/theonemule/simple-openvpn-server/master/index.sh
+wget -O /var/www/html/index.sh https://raw.githubusercontent.com/gabrielpc1190/simple-openvpn-server/master/index.sh
 
-wget -O /var/www/html/download.sh https://raw.githubusercontent.com/theonemule/simple-openvpn-server/master/download.sh
+wget -O /var/www/html/download.sh https://raw.githubusercontent.com/gabrielpc1190/simple-openvpn-server/master/download.sh
 chown -R www-data:www-data /var/www/html/
 
 #set the password file for the WWW logon
