@@ -12,12 +12,6 @@ The scripts assumes that there is NOT an instance of OpenVPN already installed o
 
 ## Installing OpenVPN
 
-Optionally, you can do a completely automated deployment to Azure and skip past the installation to **Managing Clients**.
-
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftheonemule%2Fsimple-openvpn-server%2Fmaster%2Fopenvpn-template.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
-
-Otherwise, use the installer:
-
 1. Pull up a terminal or SSH into the target server.
 
 1. Logon as root
