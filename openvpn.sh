@@ -1,12 +1,30 @@
 #!/bin/bash
 
-# defaults 
-ADMINPASSWORD="secret"
-DNS1="8.8.8.8"
-DNS2="8.8.4.4"
-PROTOCOL=udp
-PORT=1194
-HOST=$(wget -4qO- "http://whatismyip.akamai.com/")
+read -p 'Type the password you want to use for the management interface, default is secret: ' ADMINPASSWORD
+ADMINPASSWORD=${ADMINPASSWORD:-secret}
+
+read -p 'Define the DNS server 1 you want to use for the OpenVPN client, default is 8.8.8.8: ' DNS1
+DNS1=${DNS1:-8.8.8.8}
+
+read -p 'Define the DNS server 2 you want to use for the OpenVPN client, default is 1.1.1.1: ' DNS2
+DNS2=${DNS2:-1.1.1.1}
+
+read -p 'Define the OpenVPN Transport Protocol you want to use (tcp/udp), default is udp : ' PROTOCOL
+PROTOCOL=${PROTOCOL:-udp}
+
+read -p 'Define the OpenVPN port you want yo use, default is 1194, remember to forward this port on your router to this server LAN IP Address:' PORT
+PORT=${PORT:-1194}
+
+read -p 'Define the hostname for your server, if not defined, the current Public IP Address will be used: ' HOST
+HOST=${HOST:-(wget -4qO- "http://whatismyip.akamai.com/")}
+
+# defaults
+#ADMINPASSWORD="secret"
+#DNS1="8.8.8.8"
+#DNS2="1.1.1.1"
+#PROTOCOL=udp
+#PORT=1194
+#HOST=$(wget -4qO- "http://whatismyip.akamai.com/")
 
 
 for i in "$@"
