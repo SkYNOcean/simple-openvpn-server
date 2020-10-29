@@ -102,15 +102,15 @@ First: import the vpn config file, rename it to nodo-replacethis.conf
 Second: add the log path line and compress line to the vpn config
 **nano /etc/openvpn/client/nodo-replacethis.conf***
 insert this on a new line:
-***compress
-log-append /var/log/openvpn.nodo-replacethis.conf.log***
+***compress***
+***log-append /var/log/openvpn.nodo-replacethis.conf.log***
 
 Third: enable the service
 ***sudo systemctl enable openvpn-client@nodo-replacethis.service***
 
 Fourth: reloading the services and reboot server
-***sudo systemctl daemon-reload
-sudo reboot***
+***sudo systemctl daemon-reload***
+***sudo reboot***
 
 Fifth: check the ip route to see the routing table
 ***ip route***
