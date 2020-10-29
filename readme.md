@@ -93,3 +93,30 @@ Once the profile is downloaded you need to configure a client:
 * **iOS**: use [OpenVPN Connect for iOS](https://itunes.apple.com/us/app/openvpn-connect/id590379981?mt=8). Install the app, then browse to the admin site in Safari. Create and/or download a profile. After the profile is downloaded, select **Open in Open VPN**. Install the profile, then select **Connect** to connect to the VPN. To disconnect, open the app again and select **Disconnect**.
 
 That's it! Your VPN is up and running.
+
+* How to start the OpenVPN client on linux at boot:
+
+First: import the vpn config file, rename it to nodo-replacethis.conf
+***mv nodo-replacethis.conf /etc/openvpn/client/nodo-replacethis.conf***
+
+Second: add the log path line and compress line to the vpn config
+**nano /etc/openvpn/client/nodo-replacethis.conf***
+insert this on a new line:
+***compress
+log-append /var/log/openvpn.nodo-replacethis.conf.log***
+
+Third: enable the service
+***sudo systemctl enable openvpn-client@nodo-replacethis.service***
+
+Fourth: reloading the services and reboot server
+***sudo systemctl daemon-reload
+sudo reboot***
+
+Fifth: check the ip route to see the routing table
+***ip route***
+
+If route is not connected, check the log file
+***tail -f /var/log/openvpn.nodo-replacethis.conf.log***
+
+Also can check the service status
+***sudo systemctl status openvpn-client@nodo-replacethis.service***
