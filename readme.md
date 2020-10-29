@@ -94,7 +94,7 @@ Once the profile is downloaded you need to configure a client:
 
 That's it! Your VPN is up and running.
 
-* How to start the OpenVPN client on linux at boot:
+## How to start the OpenVPN client on linux at boot:
 
 First: import the vpn config file, rename it to nodo-replacethis.conf
 ***mv nodo-replacethis.conf /etc/openvpn/client/nodo-replacethis.conf***
